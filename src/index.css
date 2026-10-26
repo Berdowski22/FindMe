@@ -12,6 +12,21 @@ body {
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+}
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+#root main { flex: 1; }
+.fm-footer {
+  background: #1e1b4b;
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .btn-primary {
   --bs-btn-bg: var(--fm-primary);
   --bs-btn-border-color: var(--fm-primary);

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getJobs, saveJobs } from '../utils/storage'
+import { resizeImage } from '../utils/image'
+import Avatar from '../components/Avatar'
 
 const LEVELS = ['Başlangıç', 'Orta', 'İleri', 'Anadil']
 const emptyCv = { title: '', phone: '', city: '', about: '', link: '', education: [], experience: [], skills: [], languages: [] }
@@ -51,6 +53,19 @@ export default function ProfilePage() {
   const [cv, setCv] = useState({ ...emptyCv, ...user.cv })
   const [skill, setSkill] = useState('')
   const [saved, setSaved] = useState(false)
+  const [photoError, setPhotoError] = useState('')
+
+  async function onPhoto(e) {
+    const file = e.target.files[0]
+    e.target.value = ''
+    if (!file) return
+    try {
+      updateProfile({ photo: await resizeImage(file) })
+      setPhotoError('')
+    } catch (err) {
+      setPhotoError(err.message)
+    }
+  }
 
   const change = (patch) => {
     setCv((c) => ({ ...c, ...patch }))
@@ -83,7 +98,17 @@ export default function ProfilePage() {
       <div className="card mb-3">
         <div className="card-body">
           <div className="d-flex flex-column flex-sm-row gap-3 align-items-sm-center">
-            <div className="cv-avatar">{name.charAt(0).toUpperCase() || '?'}</div>
+            <div className="d-flex flex-column align-items-center gap-2">
+              <Avatar user={user} name={name} size={96} />
+              <div className="no-print d-flex gap-2">
+                <label className="btn btn-sm btn-outline-primary mb-0">
+                  📷 {user.photo ? 'Değiştir' : 'Fotoğraf ekle'}
+                  <input type="file" accept="image/*" hidden onChange={onPhoto} />
+                </label>
+                {user.photo && <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => updateProfile({ photo: null })}>Kaldır</button>}
+              </div>
+              {photoError && <small className="text-danger">{photoError}</small>}
+            </div>
             <div className="flex-grow-1">
               <input className="form-control form-control-lg fw-bold mb-2" required placeholder="Ad Soyad" value={name} onChange={(e) => { setName(e.target.value); setSaved(false) }} />
               {isSeeker && <input className="form-control" placeholder="Unvan (ör. Frontend Developer)" value={cv.title} onChange={setField('title')} />}

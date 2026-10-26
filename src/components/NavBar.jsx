@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Avatar from './Avatar'
 
 export default function NavBar() {
   const { user, logout } = useAuth()
@@ -38,6 +39,7 @@ export default function NavBar() {
           </div>
           {user ? (
             <div className="d-flex align-items-center gap-2 text-white pb-2 pb-md-0">
+              <Avatar user={user} size={32} className="cv-avatar" />
               <span>{user.name}</span>
               <button
                 className="btn btn-sm btn-light"
